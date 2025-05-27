@@ -12,7 +12,6 @@
 
 ## Tambahan
 - npm install -D tailwindcss
-- npx tailwindcss init
 - npm install ejs
 - npm install express-session mysql2 bcrypt
 
