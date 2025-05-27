@@ -24,7 +24,7 @@ contract Warehouse {
         string note;
     }
 
-    address private owner;
+    address public owner;
     uint private nextItemId = 1;
 
     mapping(uint256 => Item) public items;
@@ -67,7 +67,19 @@ contract Warehouse {
     function addOperator(address _operator) public onlyOwner {
         require(!operators[_operator], "Already operator");
         operators[_operator] = true;
-        operatorList.push(_operator);
+
+        bool exists = false;
+        for (uint i = 0; i < operatorList.length; i++) {
+            if (operatorList[i] == _operator) {
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists) {
+            operatorList.push(_operator);
+        }
+
         emit OperatorChanged(_operator, true);
     }
 
@@ -94,7 +106,7 @@ contract Warehouse {
         return active;
     }
 
-    function addItem(string memory name, string memory category) public onlyOperator {
+    function addItem(string memory name, string memory category) public onlyOwner {
         items[nextItemId] = Item(nextItemId, name, category, 0, true);
         emit ItemAdded(nextItemId, name);
         nextItemId++;

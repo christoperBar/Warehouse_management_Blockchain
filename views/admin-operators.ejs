@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kelola Operator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+  <div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-md">
+    <h1 class="text-2xl font-bold mb-6 text-blue-800">🧑‍💼 Kelola Operator Aktif</h1>
+
+    <!-- Tambah Operator -->
+    <div class="border-t pt-6 mt-6">
+      <h2 class="text-lg font-semibold mb-3">➕ Tambah Operator Baru</h2>
+      <form action="/admin/operator/add" method="POST" class="flex gap-4 items-center">
+        <input type="text" name="address" required
+          class="w-full border border-gray-300 p-2 rounded focus:outline-none"
+          placeholder="0x..." />
+        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Tambah
+        </button>
+      </form>
+      <br>
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+        <%= error %>
+    </div>
+    <% } %>
+      <p class="text-sm text-gray-500 mt-2">🔐 Password default: <code>operator123</code></p>
+    </div>
+
+
+    <br>
+    <!-- Daftar Operator -->
+    <table class="w-full mb-6 text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="py-2 px-4 border-b">#</th>
+          <th class="py-2 px-4 border-b">Ethereum Address</th>
+          <th class="py-2 px-4 border-b text-right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (activeOperators.length === 0) { %>
+          <tr>
+            <td colspan="3" class="text-center py-4 text-gray-500">Tidak ada operator aktif.</td>
+          </tr>
+        <% } else { %>
+          <% activeOperators.forEach((op, idx) => { %>
+            <tr class="hover:bg-gray-50">
+              <td class="py-2 px-4 border-b"><%= idx + 1 %></td>
+              <td class="py-2 px-4 border-b font-mono"><%= op %></td>
+              <td class="py-2 px-4 border-b text-right">
+                <form action="/admin/operator/remove" method="POST" onsubmit="return confirm('Yakin hapus operator ini?')">
+                  <input type="hidden" name="address" value="<%= op %>" />
+                  <button class="text-red-500 hover:text-red-700 text-sm">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        <% } %>
+      </tbody>
+    </table>
+
+    
+
+    <div class="mt-8 text-center">
+      <a href="/admin/dashboard" class="text-blue-600 hover:underline">← Kembali ke Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>
