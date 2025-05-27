@@ -12,3 +12,5 @@
 
 ## Deploy
 - npx hardhat run scripts/deploy.cjs --network localhost
+- node src/js/server.js
+
