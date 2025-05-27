@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Warehouse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-800">📦 Warehouse Admin</h1>
+    <span class="text-sm text-gray-600">Logged in as: <%= address %></span>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto py-10 px-6">
+    <!-- Stat Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+      <div class="bg-white rounded-xl shadow p-6 flex items-center justify-between border-l-4 border-blue-500">
+        <div>
+          <h2 class="text-gray-600 text-sm font-semibold">Total Items</h2>
+          <p class="text-3xl font-bold text-blue-800"><%= itemCount %></p>
+        </div>
+        <div class="text-blue-500 text-3xl">📦</div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-6 flex items-center justify-between border-l-4 border-green-500">
+        <div>
+          <h2 class="text-gray-600 text-sm font-semibold">Active Operators</h2>
+          <p class="text-3xl font-bold text-green-800"><%= operatorCount %></p>
+        </div>
+        <div class="text-green-500 text-3xl">🧑‍💼</div>
+      </div>
+    </section>
+
+    <!-- Navigation Buttons -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+      <a href="/items" class="bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition">
+        📋 Kelola Barang
+      </a>
+      <a href="/admin/operators" class="bg-purple-600 text-white py-4 rounded-lg font-semibold hover:bg-purple-700 transition">
+        🧑 Kelola Operator
+      </a>
+      <a href="/logs" class="bg-yellow-500 text-white py-4 rounded-lg font-semibold hover:bg-yellow-600 transition">
+        📈 Lihat Log Transaksi
+      </a>
+      <a href="/stock/low" class="bg-pink-500 text-white py-4 rounded-lg font-semibold hover:bg-pink-600 transition">
+        ⚠️ Barang Hampir Habis
+      </a>
+      <a href="/logout" class="bg-red-500 text-white py-4 rounded-lg font-semibold hover:bg-red-600 transition">
+        🚪 Logout
+      </a>
+    </section>
+  </main>
+</body>
+</html>
