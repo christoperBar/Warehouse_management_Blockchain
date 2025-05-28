@@ -1,55 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard - Warehouse</title>
+  <meta charset="UTF-8" />
+  <title>Warehouse Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
-  <!-- Header -->
-  <header class="bg-white shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-blue-800">📦 Warehouse Admin</h1>
-    <span class="text-sm text-gray-600">Logged in as: <%= address %></span>
-  </header>
+<body class="bg-gray-100 font-sans">
 
-  <!-- Main Content -->
-  <main class="max-w-5xl mx-auto py-10 px-6">
-    <!-- Stat Cards -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-      <div class="bg-white rounded-xl shadow p-6 flex items-center justify-between border-l-4 border-blue-500">
-        <div>
-          <h2 class="text-gray-600 text-sm font-semibold">Total Items</h2>
-          <p class="text-3xl font-bold text-blue-800"><%= itemCount %></p>
-        </div>
-        <div class="text-blue-500 text-3xl">📦</div>
-      </div>
-      <div class="bg-white rounded-xl shadow p-6 flex items-center justify-between border-l-4 border-green-500">
-        <div>
-          <h2 class="text-gray-600 text-sm font-semibold">Active Operators</h2>
-          <p class="text-3xl font-bold text-green-800"><%= operatorCount %></p>
-        </div>
-        <div class="text-green-500 text-3xl">🧑‍💼</div>
-      </div>
-    </section>
+  <div class="flex min-h-screen">
 
-    <!-- Navigation Buttons -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
-      <a href="/items" class="bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition">
-        📋 Kelola Barang
-      </a>
-      <a href="/admin/operators" class="bg-purple-600 text-white py-4 rounded-lg font-semibold hover:bg-purple-700 transition">
-        🧑 Kelola Operator
-      </a>
-      <a href="/logs" class="bg-yellow-500 text-white py-4 rounded-lg font-semibold hover:bg-yellow-600 transition">
-        📈 Lihat Log Transaksi
-      </a>
-      <a href="/stock/low" class="bg-pink-500 text-white py-4 rounded-lg font-semibold hover:bg-pink-600 transition">
-        ⚠️ Barang Hampir Habis
-      </a>
-      <a href="/logout" class="bg-red-500 text-white py-4 rounded-lg font-semibold hover:bg-red-600 transition">
-        🚪 Logout
-      </a>
-    </section>
-  </main>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md flex flex-col">
+      <div class="px-6 py-5 border-b border-gray-200">
+        <h1 class="text-xl font-bold text-blue-700">📦 Warehouse Admin</h1>
+      </div>
+      <nav class="flex-1 px-4 py-4 space-y-2">
+        <a href="/dashboard" class="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg">
+          🏠 <span class="ml-2">Dashboard</span>
+        </a>
+        <a href="/admin/items" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          📋 <span class="ml-2">Kelola Barang</span>
+        </a>
+        <a href="/admin/operators" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          🧑 <span class="ml-2">Kelola Operator</span>
+        </a>
+        <a href="/logs" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          📈 <span class="ml-2">Log Transaksi</span>
+        </a>
+      </nav>
+      <div class="mt-auto px-4 py-3 border-t border-gray-200 space-y-2">
+        <a href="/logout" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg font-medium">
+          🚪 <span class="ml-2">Logout</span>
+        </a>
+        <p class="text-xs text-gray-500 overflow-hidden">Logged in as: <%= address %></p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <!-- Top Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
+        <!-- Total Items -->
+        <div class="bg-white rounded-xl shadow p-6 border-l-4 border-blue-500">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Total Items</p>
+              <p class="text-3xl font-bold text-blue-700"><%= itemCount %></p>
+            </div>
+            <div class="text-4xl text-blue-400">📦</div>
+          </div>
+        </div>
+        <!-- Active Operators -->
+        <div class="bg-white rounded-xl shadow p-6 border-l-4 border-green-500">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Active Operators</p>
+              <p class="text-3xl font-bold text-green-700"><%= operatorCount %></p>
+            </div>
+            <div class="text-4xl text-green-400">🧑‍💼</div>
+          </div>
+        </div>
+        <!-- Log Count -->
+        <div class="bg-white rounded-xl shadow p-6 border-l-4 border-purple-500">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-500 font-semibold">Today’s Logs</p>
+              <p class="text-3xl font-bold text-green-700"><%= logsToday %></p>
+            </div>
+            <div class="text-4xl text-purple-400">📈</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Summary -->
+      <div class="bg-white rounded-xl shadow p-6 mb-10">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold text-gray-700">Today’s Summary</h2>
+        </div>
+        <div class="w-full bg-white rounded-lg p-4">
+          <canvas id="todayChart" height="100"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Chart.js Script -->
+  <script>
+    const ctx = document.getElementById("todayChart").getContext("2d");
+    const stockIn = parseInt('<%= stockInToday %>') || 0;
+    const stockOut = parseInt('<%= stockOutToday %>') || 0;
+    const todayChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Barang Masuk", "Barang Keluar"],
+        datasets: [{
+          label: "Jumlah Transaksi Hari Ini",
+          data: [stockIn, stockOut],
+          backgroundColor: ["#3B82F6", "#EF4444"],
+          borderRadius: 8,
+          barThickness: 40
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.parsed.x + " unit";
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+
 </body>
 </html>

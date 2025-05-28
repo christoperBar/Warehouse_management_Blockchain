@@ -99,13 +99,18 @@ app.get("/admin/dashboard", requireLogin("admin"), async (req, res) => {
   try {
     const items = await RC.getAllItems();
     const operators = await RC.getActiveOperators();
+    const [stockInToday, stockOutToday] = await RC.getTodayStockInOut();
 
     res.render("admin-dashboard", {
       itemCount: items.length,
       operatorCount: operators.length,
+      stockInToday: stockInToday.toString(),
+      stockOutToday: stockOutToday.toString(),
+      logsToday: (stockOutToday + stockInToday).toString(),
       address: req.session.address
     });
   } catch (err) {
+    console.error("Error loading dashboard:", err);
     res.status(500).send("Gagal muat dashboard admin: " + err.message);
   }
 });
@@ -113,11 +118,20 @@ app.get("/admin/dashboard", requireLogin("admin"), async (req, res) => {
 app.get("/admin/operators", requireLogin("admin"), async (req, res) => {
   try {
     const activeOperators = await RC.getActiveOperators();
-    res.render("admin-operators", { activeOperators });
+    res.render("admin-operators", {
+      activeOperators,
+      error: null,
+      address: req.session.address
+    });
   } catch (err) {
-    res.status(500).send("Gagal ambil data operator: " + err.message);
+    res.status(500).render("admin-operators", {
+      activeOperators: [],
+      error: err.message,
+      address: req.session.address
+    });
   }
 });
+
 
 app.post("/admin/operator/add", requireLogin("admin"), async (req, res) => {
   const { address } = req.body;
@@ -161,16 +175,25 @@ app.post("/admin/operator/remove", requireLogin("admin"), async (req, res) => {
   }
 });
 
-app.get("/items", requireLogin("admin"), async (req, res) => {
+app.get("/admin/items", requireLogin("admin"), async (req, res) => {
   try {
     const items = await RC.getAllItems();
-    res.render("items", { items, error: null });
+    res.render("items", {
+      items,
+      error: null,
+      address: req.session.address  // ditambahkan agar bisa ditampilkan di sidebar
+    });
   } catch (err) {
-    res.status(500).render("items", { items: [], error: err.message });
+    res.status(500).render("items", {
+      items: [],
+      error: err.message,
+      address: req.session.address  // tetap dikirim meskipun error
+    });
   }
 });
 
-app.post("/items/add", requireLogin("admin"), async (req, res) => {
+
+app.post("/admin/items/add", requireLogin("admin"), async (req, res) => {
   const { name, category } = req.body;
 
   if (!name || !category) {
@@ -180,7 +203,7 @@ app.post("/items/add", requireLogin("admin"), async (req, res) => {
 
   try {
     const tx = await RC.addItem(name, category);
-    res.redirect("/items");
+    res.redirect("/admin/items");
   } catch (err) {
     const items = await RC.getAllItems();
     res.render("items", { items, error: "Gagal menambahkan barang: " + err.message });

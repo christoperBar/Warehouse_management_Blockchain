@@ -220,4 +220,23 @@ contract Warehouse {
             amounts
         );
     }
+
+    function getTodayStockInOut() public view returns (uint256 totalIn, uint256 totalOut) {
+        uint256 startOfDay = block.timestamp - (block.timestamp % 1 days);
+
+        for (uint i = 0; i < logs.length; i++) {
+            if (logs[i].timestamp >= startOfDay) {
+                uint sum = 0;
+                for (uint j = 0; j < logs[i].items.length; j++) {
+                    sum += logs[i].items[j].amount;
+                }
+
+                if (logs[i].action == Action.CheckIn) {
+                    totalIn += sum;
+                } else if (logs[i].action == Action.CheckOut) {
+                    totalOut += sum;
+                }
+            }
+        }
+    }
 }
