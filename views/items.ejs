@@ -29,6 +29,9 @@
         </a>
       </nav>
       <div class="mt-auto px-4 py-3 border-t border-gray-200 space-y-2">
+        <a href="/change-password" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          🔒 <span class="ml-2">Ganti Password</span>
+        </a>
         <a href="/logout" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg font-medium">
           🚪 <span class="ml-2">Logout</span>
         </a>
@@ -62,6 +65,16 @@
           </form>
         </div>
 
+        <!-- Search -->
+        <div class="mb-4">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Cari nama atau kategori barang..."
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 text-sm"
+          />
+        </div>
+
         <!-- Tabel Barang -->
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -73,7 +86,7 @@
                 <th class="py-2 px-4 border-b text-right">Stok</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="itemTable">
               <% if (items.length === 0) { %>
                 <tr>
                   <td colspan="4" class="text-center py-4 text-gray-500">Belum ada barang.</td>
@@ -94,5 +107,19 @@
       </div>
     </main>
   </div>
+
+  <!-- Script Search -->
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const rows = document.querySelectorAll('#itemTable tr');
+
+    searchInput.addEventListener('input', () => {
+      const keyword = searchInput.value.toLowerCase();
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(keyword) ? '' : 'none';
+      });
+    });
+  </script>
 </body>
 </html>

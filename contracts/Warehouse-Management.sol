@@ -221,22 +221,55 @@ contract Warehouse {
         );
     }
 
-    function getTodayStockInOut() public view returns (uint256 totalIn, uint256 totalOut) {
+    function getTodayStockInOut() public view returns (uint256 totalInTransactions, uint256 totalOutTransactions) {
         uint256 startOfDay = block.timestamp - (block.timestamp % 1 days);
 
         for (uint i = 0; i < logs.length; i++) {
             if (logs[i].timestamp >= startOfDay) {
-                uint sum = 0;
-                for (uint j = 0; j < logs[i].items.length; j++) {
-                    sum += logs[i].items[j].amount;
-                }
-
                 if (logs[i].action == Action.CheckIn) {
-                    totalIn += sum;
+                    totalInTransactions++; 
                 } else if (logs[i].action == Action.CheckOut) {
-                    totalOut += sum;
+                    totalOutTransactions++; 
                 }
             }
         }
     }
+
+    function getTotalLogs() public view returns (uint256) {
+        return logs.length;
+    }
+
+    // function getLogsByDateRange(uint256 startTimestamp, uint256 endTimestamp) public view returns (uint256[] memory logIndices) {
+    //     uint256 count = 0;
+    //     for (uint256 i = 0; i < logs.length; i++) {
+    //         if (logs[i].timestamp >= startTimestamp && logs[i].timestamp <= endTimestamp) {
+    //             count++;
+    //         }
+    //     }
+    //     logIndices = new uint256[](count);
+    //     uint256 index = 0;
+    //     for (uint256 i = 0; i < logs.length; i++) {
+    //         if (logs[i].timestamp >= startTimestamp && logs[i].timestamp <= endTimestamp) {
+    //             logIndices[index] = i;
+    //             index++;
+    //         }
+    //     }
+    //     return logIndices;
+    // }
+
+    // function getTransactionStatsByDate(uint256 startTimestamp, uint256 endTimestamp) public view returns (uint256 checkInCount, uint256 checkOutCount) {
+    //     checkInCount = 0;
+    //     checkOutCount = 0;
+    //     for (uint256 i = 0; i < logs.length; i++) {
+    //         if (logs[i].timestamp >= startTimestamp && logs[i].timestamp <= endTimestamp) {
+    //             if (logs[i].action == Action.CheckIn) {
+    //                 checkInCount++;
+    //             } else if (logs[i].action == Action.CheckOut) {
+    //                 checkOutCount++;
+    //             }
+    //         }
+    //     }
+    //     return (checkInCount, checkOutCount);
+    // }
+
 }
