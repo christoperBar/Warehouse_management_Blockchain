@@ -54,7 +54,7 @@ describe("Warehouse Contract", function () {
 
         const log = await warehouse.getLog(0);
         expect(log.note).to.equal("Restock Item A");
-        expect(log.action).to.equal(0); // 0 = CheckIn
+        expect(log.action).to.equal(0);
         expect(log.operator).to.equal(operator1.address);
     });
 
@@ -72,20 +72,16 @@ describe("Warehouse Contract", function () {
 
         const log = await warehouse.getLog(1);
         expect(log.note).to.equal("Pengambilan stok untuk pengiriman");
-        expect(log.action).to.equal(1); // 1 = CheckOut
+        expect(log.action).to.equal(1);
         expect(log.operator).to.equal(operator1.address);
     });
 
     it("5. Validasi gagal: stockOut melebihi stok, item tidak aktif, atau bukan operator", async function () {
-        // Tambah item baru tapi tidak pernah restock (qty = 0)
         await warehouse.connect(operator1).addItem("Item B", "Category Z");
-
-        // Coba stockOut melebihi stok
         await expect(
             warehouse.connect(operator1).stockOut([2], [10], "Ambil stok kosong")
         ).to.be.revertedWith("Insufficient stock");
 
-        // Non-operator tidak boleh stockIn/Out
         await expect(
             warehouse.connect(outsider).stockIn([1], [10], "Gagal stock in")
         ).to.be.revertedWith("Not operator");
