@@ -1,7 +1,6 @@
 const path = require("path");
 
 async function main() {
-    // This is just a convenience check
     if (network.name === "hardhat") {
       console.warn(
         "You are trying to deploy a contract to the Hardhat Network, which" +
@@ -10,7 +9,6 @@ async function main() {
       );
     }
   
-    // ethers is available in the global scope
     const [deployer] = await ethers.getSigners();
     console.log(
       "Deploying the contracts with the account:",
@@ -19,13 +17,9 @@ async function main() {
   
     const Warehouse = await ethers.getContractFactory("Warehouse");
     const warehouse = await Warehouse.deploy();
-
-    //console.log(JSON.stringify(warehouse));
-    //console.log(warehouse.target);
   
     console.log("Warehouse smart contract address:", warehouse.target);
   
-    // We also save the contract's artifacts and address in the frontend directory
     saveFrontendFiles(warehouse);
   }
 

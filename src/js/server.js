@@ -32,20 +32,16 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(async (req, res, next) => {
-    // Create read-only instance for non-authenticated routes
     req.RC = await tools.constructSmartContract();
-    
-    // Upgrade to write-capable instance if user is logged in
     if (req.session.address) {
         req.RC = await tools.constructSmartContract(req.session.address);
     }
-    
     next();
 });
+
 // punya berdua
 app.get("/", (req, res) => {
   if (req.session.address) {
-    // Auto-redirect if already logged in
     const redirectPath = req.session.role === "admin" ? "/admin/dashboard" : "/operator/dashboard";
     return res.redirect(redirectPath);
   }
@@ -72,7 +68,6 @@ app.post("/login", async (req, res) => {
       return res.status(401).render("login", { error: "⚠️ Incorrect password." });
     }
 
-    // Check role from blockchain
     const isOperator = await RC.operators(address);
     const owner = await RC.owner();
 
@@ -458,15 +453,12 @@ app.post('/operator/checkout', requireLogin("operator"), async (req, res) => {
   const { itemIds, amounts, note } = req.body;
 
   try {
-    // Validate input
     if (!itemIds || !amounts) {
       throw new Error("Pilih minimal 1 barang");
     }
 
     const ids = itemIds.map(Number);
     const qtys = amounts.map(Number);
-
-    // Check stock availability
     const items = await req.RC.getAllItems();
     items.forEach(item => {
       const idx = ids.indexOf(item.id);
