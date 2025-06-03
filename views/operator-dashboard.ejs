@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Warehouse Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md flex flex-col">
+        <div class="px-6 py-5 border-b border-gray-200">
+          <h1 class="text-xl font-bold text-blue-700">📦 Warehouse Operator</h1>
+        </div>
+        <nav class="flex-1 px-4 py-4 space-y-2">
+          <a
+            href="/operator/dashboard"
+            class="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg"
+          >
+            🏠 <span class="ml-2">Dashboard</span>
+          </a>
+          <a
+            href="/operator/items"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            🏷️ <span class="ml-2">Daftar Barang</span>
+          </a>
+          <a
+            href="/operator/checkin"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            ➡️ <span class="ml-2">Check-In Barang</span>
+          </a>
+          <a
+            href="/operator/checkout"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            ⬅️ <span class="ml-2">Check-Out Barang</span>
+          </a>
+          <a
+            href="/logs"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            📈 <span class="ml-2">Log Transaksi</span>
+          </a>
+        </nav>
+        <div class="mt-auto px-4 py-3 border-t border-gray-200 space-y-2">
+          <a
+            href="/change-password"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            🔒 <span class="ml-2">Ganti Password</span>
+          </a>
+          <a
+            href="/logout"
+            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg font-medium"
+          >
+            🚪 <span class="ml-2">Logout</span>
+          </a>
+          <p class="text-xs text-gray-500 overflow-hidden">
+            Logged in as: <%= address %>
+          </p>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-6">
+        <!-- Top Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-10">
+          <!-- Total Items -->
+          <div
+            class="bg-white rounded-xl shadow p-6 border-l-4 border-blue-500"
+          >
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm text-gray-500 font-semibold">
+                  Today's Check-In
+                </p>
+                <p class="text-3xl font-bold text-blue-700">
+                  <%= stockInToday %>
+                </p>
+              </div>
+              <div class="text-4xl text-blue-400">➡️</div>
+            </div>
+          </div>
+          <!-- Active Operators -->
+          <div
+            class="bg-white rounded-xl shadow p-6 border-l-4 border-green-500"
+          >
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm text-gray-500 font-semibold">
+                  Today's Check-Out
+                </p>
+                <p class="text-3xl font-bold text-green-700">
+                  <%= stockOutToday %>
+                </p>
+              </div>
+              <div class="text-4xl text-green-400">⬅️</div>
+            </div>
+          </div>
+          <!-- Log Count -->
+          <div
+            class="bg-white rounded-xl shadow p-6 border-l-4 border-purple-500"
+          >
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm text-gray-500 font-semibold">Today’s Logs</p>
+                <p class="text-3xl font-bold text-green-700">
+                  <%= logsToday %>
+                </p>
+              </div>
+              <div class="text-4xl text-purple-400">📈</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Summary -->
+        <div class="bg-white rounded-xl shadow p-6 mb-10">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Today’s Summary</h2>
+            <p class="text-sm text-gray-500"><%= todayDate %></p>
+          </div>
+          <div class="w-full bg-white rounded-lg p-4">
+            <canvas id="todayChart" height="100"></canvas>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Chart.js Script -->
+    <script>
+      const ctx = document.getElementById("todayChart").getContext("2d");
+      const stockIn = parseInt("<%= stockInToday %>") || 0;
+      const stockOut = parseInt("<%= stockOutToday %>") || 0;
+      const todayChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Barang Masuk", "Barang Keluar"],
+          datasets: [
+            {
+              label: "Jumlah Transaksi Hari Ini",
+              data: [stockIn, stockOut],
+              backgroundColor: ["#3B82F6", "#EF4444"],
+              borderRadius: 8,
+              barThickness: 40,
+            },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          scales: {
+            x: {
+              beginAtZero: true,
+            },
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return context.parsed.x + " unit";
+                },
+              },
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
