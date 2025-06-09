@@ -4,20 +4,17 @@
 
 ## Setup
 
-- npm init
 - npm install
-- npm install --save-dev hardhat
-- npm install --save-dev @nomicfoundation/hardhat-toolbox
 
 ## Start local blockchain node
 
-- npx hardhat node
+- npx hardhat node --trace
 
 ## Deploy
 
 - npx hardhat run scripts/deploy.cjs --network localhost
 - node src/js/server.js
 
-## Setelah deploy
+## Setelah deploy (untuk pertama kali)
 
 - registerkan owner (node src/js/register-admin.js)
