@@ -1,8 +1,11 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import hardhat from "hardhat";
+const { ethers } = hardhat;
+
+import chai from "chai";
+const { expect } = chai;
 
 describe("Warehouse Contract", function () {
-    let owner, operator1, operator2, outsider, warehouse;
+    let Warehouse, warehouse, owner, operator1, operator2, outsider, addr1;
 
     before(async function () {
         [owner, operator1, operator2, outsider] = await ethers.getSigners();
@@ -24,9 +27,9 @@ describe("Warehouse Contract", function () {
         ).to.be.revertedWith("Not owner");
     });
 
-    it("2. Operator dapat menambahkan item", async function () {
+    it("2. Owner dapat menambahkan item", async function () {
         await expect(
-            warehouse.connect(operator1).addItem("Item A", "Category X")
+            warehouse.connect(owner).addItem("Item A", "Category X")
         ).to.emit(warehouse, "ItemAdded").withArgs(1, "Item A");
 
         const item = await warehouse.getItemById(1);
@@ -37,7 +40,7 @@ describe("Warehouse Contract", function () {
 
         await expect(
             warehouse.connect(outsider).addItem("Item B", "Category Y")
-        ).to.be.revertedWith("Not operator");
+        ).to.be.revertedWith("Not owner");
     });
 
     it("3. Operator dapat melakukan stockIn", async function () {
@@ -77,7 +80,7 @@ describe("Warehouse Contract", function () {
     });
 
     it("5. Validasi gagal: stockOut melebihi stok, item tidak aktif, atau bukan operator", async function () {
-        await warehouse.connect(operator1).addItem("Item B", "Category Z");
+        await warehouse.connect(owner).addItem("Item B", "Category Z");
         await expect(
             warehouse.connect(operator1).stockOut([2], [10], "Ambil stok kosong")
         ).to.be.revertedWith("Insufficient stock");
@@ -111,6 +114,17 @@ describe("Warehouse Contract", function () {
 
         await expect(
             warehouse.connect(operator1).addItem("Should fail", "No access")
-        ).to.be.revertedWith("Not operator");
+        ).to.be.revertedWith("Not owner");
+    });
+
+    it("8. Fungsi getTodayStockInOut mengembalikan jumlah transaksi hari ini", async function () {
+        const [inToday, outToday] = await warehouse.getTodayStockInOut();
+        expect(inToday).to.equal(1); 
+        expect(outToday).to.equal(1); 
+    });
+
+    it("9. Fungsi getTotalLogs mengembalikan jumlah log yang benar", async function () {
+        const totalLogs = await warehouse.getTotalLogs();
+        expect(totalLogs).to.equal(2);
     });
 });
