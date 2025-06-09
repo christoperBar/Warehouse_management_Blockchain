@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Check-In Barang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md flex flex-col">
+        <div class="px-6 py-5 border-b border-gray-200">
+          <h1 class="text-xl font-bold text-blue-700">📦 Warehouse Operator</h1>
+        </div>
+        <nav class="flex-1 px-4 py-4 space-y-2">
+          <a
+            href="/operator/dashboard"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            🏠 <span class="ml-2">Dashboard</span>
+          </a>
+          <a
+            href="/operator/items"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            🏷️ <span class="ml-2">Daftar Barang</span>
+          </a>
+          <a
+            href="/operator/checkin"
+            class="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg"
+          >
+            ➡️ <span class="ml-2">Check-In Barang</span>
+          </a>
+          <a
+            href="/operator/checkout"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            ⬅️ <span class="ml-2">Check-Out Barang</span>
+          </a>
+          <a
+            href="/logs"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            📈 <span class="ml-2">Log Transaksi</span>
+          </a>
+        </nav>
+        <div class="mt-auto px-4 py-3 border-t border-gray-200 space-y-2">
+          <a
+            href="/change-password"
+            class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            🔒 <span class="ml-2">Ganti Password</span>
+          </a>
+          <a
+            href="/logout"
+            class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg font-medium"
+          >
+            🚪 <span class="ml-2">Logout</span>
+          </a>
+          <p class="text-xs text-gray-500 overflow-hidden">
+            Logged in as: <%= address %>
+          </p>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-6">
+        <div class="bg-white rounded-xl shadow p-6 max-w-4xl mx-auto">
+          <h1 class="text-2xl font-bold mb-6 text-blue-800">
+            ➡️ Form Check-In Barang
+          </h1>
+
+          <% if (error) { %>
+          <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+            <%= error %>
+          </div>
+          <% } %> <% if (success) { %>
+          <div
+            class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 text-sm"
+          >
+            <%= success %>
+          </div>
+          <% } %>
+
+          <form method="POST" action="/operator/checkin">
+            <div class="mb-4">
+              <label for="note" class="block text-sm font-medium text-gray-700"
+                >Catatan</label
+              >
+              <textarea
+                id="note"
+                name="note"
+                class="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm"
+                placeholder="Misal: Barang datang dari supplier A"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            >
+              ✔️ Submit Check-In
+            </button>
+
+            <!-- Search Box -->
+            <div class="mb-4">
+              <label
+                for="item-search"
+                class="block text-sm font-medium text-gray-700"
+                >Cari Barang</label
+              >
+              <input
+                type="text"
+                id="item-search"
+                class="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm"
+                placeholder="Ketik nama atau kategori barang..."
+              />
+            </div>
+
+            <div class="overflow-x-auto mb-6">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="py-2 px-4 border-b">Pilih</th>
+                    <th class="py-2 px-4 border-b">Nama</th>
+                    <th class="py-2 px-4 border-b">Kategori</th>
+                    <th class="py-2 px-4 border-b text-right">Jumlah</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (items.length === 0) { %>
+                  <tr>
+                    <td colspan="4" class="text-center py-4 text-gray-500">
+                      Belum ada barang.
+                    </td>
+                  </tr>
+                  <% } else { %> <% items.forEach((item, idx) => { %>
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-2 px-4 border-b">
+                      <input
+                        type="checkbox"
+                        name="itemIds[]"
+                        value="<%= item.id %>"
+                        class="checkbox-toggle"
+                      />
+                    </td>
+                    <td class="py-2 px-4 border-b"><%= item.name %></td>
+                    <td class="py-2 px-4 border-b"><%= item.category %></td>
+                    <td class="py-2 px-4 border-b text-right">
+                      <input
+                        type="number"
+                        name="amounts[]"
+                        class="amount-input w-20 px-2 py-1 border border-gray-300 rounded text-right"
+                        value="1"
+                        min="1"
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                  <% }) %> <% } %>
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <!-- Script -->
+    <script>
+      // Search functionality
+      document
+        .getElementById("item-search")
+        ?.addEventListener("input", function () {
+          const searchTerm = this.value.toLowerCase();
+          const rows = document.querySelectorAll("tbody tr");
+
+          rows.forEach((row) => {
+            if (row.querySelector("td:nth-child(2)")) {
+              // Skip if no cells
+              const name = row
+                .querySelector("td:nth-child(2)")
+                .textContent.toLowerCase();
+              const category = row
+                .querySelector("td:nth-child(3)")
+                .textContent.toLowerCase();
+
+              if (name.includes(searchTerm) || category.includes(searchTerm)) {
+                row.style.display = "";
+              } else {
+                row.style.display = "none";
+              }
+            }
+          });
+        });
+
+      // Checkbox and amount input functionality
+      document.querySelectorAll("tbody tr").forEach((row) => {
+        const checkbox = row.querySelector(".checkbox-toggle");
+        const amountInput = row.querySelector(".amount-input");
+
+        if (checkbox && amountInput) {
+          checkbox.addEventListener("change", () => {
+            amountInput.disabled = !checkbox.checked;
+            if (!checkbox.checked) {
+              amountInput.value = "1"; // Reset when unchecked
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

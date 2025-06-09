@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kelola Operator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md flex flex-col">
+      <div class="px-6 py-5 border-b border-gray-200">
+        <h1 class="text-xl font-bold text-blue-700">📦 Warehouse Admin</h1>
+      </div>
+      <nav class="flex-1 px-4 py-4 space-y-2">
+        <a href="/admin/dashboard" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          🏠 <span class="ml-2">Dashboard</span>
+        </a>
+        <a href="/admin/items" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          📋 <span class="ml-2">Kelola Barang</span>
+        </a>
+        <a href="/admin/operators" class="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg">
+          🧑 <span class="ml-2">Kelola Operator</span>
+        </a>
+        <a href="/logs" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          📈 <span class="ml-2">Log Transaksi</span>
+        </a>
+      </nav>
+      <div class="mt-auto px-4 py-3 border-t border-gray-200 space-y-2">
+        <a href="/change-password" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+          🔒 <span class="ml-2">Ganti Password</span>
+        </a>
+        <a href="/logout" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg font-medium">
+          🚪 <span class="ml-2">Logout</span>
+        </a>
+        <p class="text-xs text-gray-500 overflow-hidden">Logged in as: <%= address %></p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <div class="bg-white rounded-xl shadow p-6 max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6 text-blue-800">🧑‍💼 Kelola Operator Aktif</h1>
+
+        <!-- Error -->
+        <% if (error) { %>
+          <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <!-- Tambah Operator -->
+        <div class="border-b pb-6 mb-6">
+          <h2 class="text-lg font-semibold mb-3 text-purple-700">➕ Tambah Operator Baru</h2>
+          <form action="/admin/operator/add" method="POST" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <input type="text" name="address" required
+              class="col-span-3 border border-gray-300 p-2 rounded w-full"
+              placeholder="0x..." />
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+              Tambah
+            </button>
+          </form>
+          <p class="text-sm text-gray-500 mt-2">🔐 Password default: <code>operator123</code></p>
+        </div>
+
+        <!-- Daftar Operator -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-100 text-sm">
+                <th class="py-2 px-4 border-b">#</th>
+                <th class="py-2 px-4 border-b">Ethereum Address</th>
+                <th class="py-2 px-4 border-b text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (activeOperators.length === 0) { %>
+                <tr>
+                  <td colspan="3" class="text-center py-4 text-gray-500">Tidak ada operator aktif.</td>
+                </tr>
+              <% } else { %>
+                <% activeOperators.forEach((op, idx) => { %>
+                  <tr class="hover:bg-gray-50 text-sm">
+                    <td class="py-2 px-4 border-b"><%= idx + 1 %></td>
+                    <td class="py-2 px-4 border-b font-mono"><%= op %></td>
+                    <td class="py-2 px-4 border-b text-right">
+                      <form action="/admin/operator/remove" method="POST" onsubmit="return confirm('Yakin hapus operator ini?')">
+                        <input type="hidden" name="address" value="<%= op %>" />
+                        <button class="text-red-500 hover:text-red-700 text-sm">Hapus</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

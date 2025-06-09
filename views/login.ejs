@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Warehouse System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">Login to Warehouse System</h1>
+
+    <% if (error) { %>
+      <div class="bg-red-100 text-red-700 p-3 mb-4 rounded text-sm">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form action="/login" method="POST" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-semibold">Ethereum Address</label>
+        <input
+          type="text"
+          name="address"
+          required
+          class="w-full border border-gray-300 p-2 rounded focus:outline-none"
+          placeholder="0x..."
+        />
+      </div>
+
+      <div>
+        <label class="block mb-1 font-semibold">Password</label>
+        <input
+          type="password"
+          name="password"
+          required
+          class="w-full border border-gray-300 p-2 rounded focus:outline-none"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+      >
+        Login
+      </button>
+    </form>
+  </div>
+</body>
+</html>
